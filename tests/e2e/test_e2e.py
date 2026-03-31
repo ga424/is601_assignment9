@@ -3,6 +3,7 @@
 import pytest  # Import the pytest framework for writing and running tests
 
 # The following decorators and functions define E2E tests for the FastAPI calculator application.
+BASE_URL = 'http://127.0.0.1:8000'
 
 @pytest.mark.e2e
 def test_hello_world(page, fastapi_server):
@@ -14,7 +15,7 @@ def test_hello_world(page, fastapi_server):
     that the server is running and serving the correct template.
     """
     # Navigate the browser to the homepage URL of the FastAPI application.
-    page.goto('http://localhost:8000')
+    page.goto(BASE_URL)
     
     # Use an assertion to check that the text within the first <h1> tag is exactly "Hello World".
     # If the text does not match, the test will fail.
@@ -30,7 +31,7 @@ def test_calculator_add(page, fastapi_server):
     that the result displayed is correct.
     """
     # Navigate the browser to the homepage URL of the FastAPI application.
-    page.goto('http://localhost:8000')
+    page.goto(BASE_URL)
     
     # Fill in the first number input field (with id 'a') with the value '10'.
     page.fill('#a', '10')
@@ -43,6 +44,7 @@ def test_calculator_add(page, fastapi_server):
     
     # Use an assertion to check that the text within the result div (with id 'result') is exactly "Result: 15".
     # This verifies that the addition operation was performed correctly and the result is displayed as expected.
+    page.wait_for_function("document.querySelector('#result').innerText.length > 0")
     assert page.inner_text('#result') == 'Result: 15'
 
 @pytest.mark.e2e
@@ -56,7 +58,7 @@ def test_calculator_divide_by_zero(page, fastapi_server):
     operations and provides meaningful feedback to the user.
     """
     # Navigate the browser to the homepage URL of the FastAPI application.
-    page.goto('http://localhost:8000')
+    page.goto(BASE_URL)
     
     # Fill in the first number input field (with id 'a') with the value '10'.
     page.fill('#a', '10')
@@ -70,4 +72,5 @@ def test_calculator_divide_by_zero(page, fastapi_server):
     # Use an assertion to check that the text within the result div (with id 'result') is exactly
     # "Error: Cannot divide by zero!". This verifies that the application handles division by zero
     # gracefully and displays the correct error message to the user.
+    page.wait_for_function("document.querySelector('#result').innerText.length > 0")
     assert page.inner_text('#result') == 'Error: Cannot divide by zero!'
